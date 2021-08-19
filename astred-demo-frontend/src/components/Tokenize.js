@@ -15,6 +15,8 @@ class TokenizeSec extends PureComponent {
         this.handleLangChange = this.handleLangChange.bind(this);
         this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.tokenizer = React.createRef();
     }
 
     async getTok(side) {
@@ -52,13 +54,15 @@ class TokenizeSec extends PureComponent {
     async handleSubmit(evt) {
         evt.preventDefault();
 
+        this.tokenizer.current.classList.add("loading")
         const [srcTok, tgtTok] = await Promise.all([this.getTok("src"), this.getTok("tgt")])
         this.props.onTokenizeFetch({ srcTok: srcTok, tgtTok: tgtTok })
+        this.tokenizer.current.classList.remove("loading")
     }
 
     render() {
         return (
-            <section id="tokenize">
+            <section id="tokenize" ref={this.tokenizer}>
                 <div className="content">
                     <h2>Tokenization and language selection</h2>
                     <p>Below you can enter the source and target sentences that you wish to analyze.

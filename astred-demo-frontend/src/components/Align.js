@@ -113,6 +113,9 @@ class AlignSec extends PureComponent {
 
     async fetchWordAligns() {
         if (this.props.srcTok.trim() !== "" && this.props.tgtTok.trim() !== "") {
+            // Add class to the previous section so that loading CSS is set on current element
+            this.aligner.current.previousElementSibling.classList.add("loading")
+
             let url = new URL(ALIGN_URL)
             let alignFormData = new FormData()
             alignFormData.append("src_sentence", this.props.srcTok)
@@ -121,6 +124,8 @@ class AlignSec extends PureComponent {
 
             const alignStr = (await fetchUrl(url)).word_aligns
             this.updateAlignFieldWithValue(alignStr)
+            
+            this.aligner.current.previousElementSibling.classList.remove("loading")
         }
     }
 
@@ -148,7 +153,11 @@ class AlignSec extends PureComponent {
 
     handleSubmit(evt) {
         evt.preventDefault()
+        
         this.validateAllFields()
+        this.aligner.current.classList.add("loading")
+        this.fetchAstred()
+        this.aligner.current.classList.remove("loading")
     }
 
     alignsCorrespondToWords(aligns) {
@@ -197,7 +206,7 @@ class AlignSec extends PureComponent {
                         </div>
                         <div className="buttons">
                             <input type="button" value="Suggest alignments" disabled={!valuesNotEmpty(this.props.srcTok, this.props.tgtTok)} name="fetch-aligns-btn" onClick={this.fetchWordAligns} />
-                            <input type="submit" value="Continue" disabled={!valuesNotEmpty(this.props.srcTok, this.props.tgtTok, this.props.wordAlignsStr) || !this.state.wordAlignsValid} name="calculate-astred-btn" onClick={this.fetchAstred} />
+                            <input type="submit" value="Continue" disabled={!valuesNotEmpty(this.props.srcTok, this.props.tgtTok, this.props.wordAlignsStr) || !this.state.wordAlignsValid} name="calculate-astred-btn" />
                         </div>
                     </form>
                     <AlignViz
