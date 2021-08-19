@@ -1,0 +1,80 @@
+@import "variables";
+
+.align-viz {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    position: relative;
+    max-width: 100%;
+    overflow-x: auto;
+    text-align: center;
+    height: 240px;
+    font-size: 20px;
+    > svg {
+        height: 100%;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        box-sizing: content-box;
+        z-index: 1;
+        line {
+            stroke: #333;
+            stroke-width: 2px;
+            &.highlight {
+                stroke: $hoverGreen;
+            }
+        }
+    }
+
+    .sentence {
+        white-space: nowrap;
+        z-index: 10;
+        &.source {            
+            margin-top: 6px;
+        }
+        &.target {
+            margin-bottom: 6px;
+        }
+        .word {
+            display: inline-block;
+            margin: auto 8px;
+            box-sizing: content-box;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 0.48em;
+            padding: 2px 4px;
+
+            &.highlight:not(.alignable),
+            &:hover {
+                color: $hoverGreen;
+            }
+            &.alignable {
+                position: relative;
+                border: 1px dashed $hoverGreen;
+                &::before {
+                    content: "+";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transform: translate(-50%, -50%);
+                    background: $hoverGreen;
+                    font-size: 12px;
+                    border-radius: 36px;
+                    width: 16px;
+                    height: 16px;
+                    line-height: 16px;
+                    color: white;
+                    text-align: center;
+                }
+            }
+            &.removable {
+                border: 1px dashed red;
+                &::before {
+                    content: "-";
+                    background: desaturate(red, 24%);
+                }
+            }
+        }
+    }
+}

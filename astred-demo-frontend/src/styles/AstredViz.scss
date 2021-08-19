@@ -1,0 +1,29 @@
+@import "variables";
+
+.astred-viz {
+    rect {
+        stroke-width: 2px;
+        fill: none;
+    }
+    .seqGroups {
+        line,
+        rect {
+            stroke: $green;
+        }
+    }
+    .sacrGroups {
+        line,
+        rect {
+            stroke: $mainFontColor;
+        }
+    }
+}
+
+.has-overlay {
+    .alignments {
+        line {
+            stroke: #ccc;
+            stroke-dasharray: 4;
+        }
+    }
+}
