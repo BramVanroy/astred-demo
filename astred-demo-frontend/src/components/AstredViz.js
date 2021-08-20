@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 
 import '../styles/AstredViz.css';
 
+import Sentence from "./Sentence"
 import { createAlignsFromStr } from "../utils"
 
 class AstredViz extends PureComponent {
@@ -17,7 +18,7 @@ class AstredViz extends PureComponent {
         this.showInfo = this.showInfo.bind(this);
         this.setSvgWidth = this.setSvgWidth.bind(this);
         this.reDraw = this.reDraw.bind(this);
-        
+
         this.astredVizDom = React.createRef();
     }
 
@@ -172,19 +173,19 @@ class AstredViz extends PureComponent {
         }
     }
 
-    reDraw() {        
+    reDraw() {
         this.setSvgWidth()
         this.updateWordLinePosition()
         this.updateRectPosition()
         this.updateSpanLinePosition()
     }
 
-    componentDidUpdate() {        
+    componentDidUpdate() {
         this.reDraw()
     }
 
-    componentDidMount() {     
-        window.addEventListener("click", this.onOutClick)        
+    componentDidMount() {
+        window.addEventListener("click", this.onOutClick)
         window.addEventListener("resize", this.reDraw)
         // word alignments need to be visible on initial render. componentDidUpdate
         // is not called on first render           
@@ -226,14 +227,11 @@ class AstredViz extends PureComponent {
         return (
             <div className={hasOverlayedLines ? "has-overlay" : ""}>
                 <output className="astred-viz align-viz" ref={this.astredVizDom} onMouseLeave={this.removeHighlights}>
-
-                    <div className="source sentence" onClick={this.showInfo}>
-                        {
-                            Object.entries(this.props.astred.src).map(([wordIdx, word]) => {
-                                return (<span key={wordIdx} className="word" data-side="src" data-aligned={JSON.stringify(word.aligned_idxs)} data-index={wordIdx} onMouseOver={this.onWordMouseOver} onMouseLeave={this.onWordMouseLeave}>{word.text}</span>)
-                            })
-                        }
-                    </div>
+                    <Sentence
+                        side="src"
+                        words={this.props.srcWords}
+                        onClickSentence={this.showInfo}
+                    />
 
                     <svg xmlns="http://www.w3.org/2000/svg">
                         <g className="alignments">
@@ -253,12 +251,11 @@ class AstredViz extends PureComponent {
                         </g>}
                     </svg>
 
-                    <div className="target sentence" onClick={this.showInfo}>
-                        {Object.entries(this.props.astred.tgt).map(([wordIdx, word]) => {
-                            return (<span key={wordIdx} className="word" data-side="tgt" data-aligned={JSON.stringify(word.aligned_idxs)} data-index={wordIdx} onMouseOver={this.onWordMouseOver} onMouseLeave={this.onWordMouseLeave}>{word.text}</span>)
-                        })
-                        }
-                    </div>
+                    <Sentence
+                        side="tgt"
+                        words={this.props.tgtWords}
+                        onClickSentence={this.showInfo}
+                    />
                 </output>
             </div>
         );

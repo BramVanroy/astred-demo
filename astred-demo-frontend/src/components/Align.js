@@ -9,7 +9,7 @@ import AlignViz from "./AlignViz"
 import { ALIGN_URL, ASTRED_URL } from "../constants"
 import { fetchUrl } from "../utils"
 
-import { createAlignsFromStr, createAlignMapping, zip, valuesNotEmpty } from "../utils"
+import { addAlignmentToWordsObj, createAlignsFromStr, createAlignMapping, zip, valuesNotEmpty } from "../utils"
 // import { errorHandling } from "../utils"
 
 class AlignSec extends PureComponent {
@@ -102,24 +102,29 @@ class AlignSec extends PureComponent {
         const alignInfo = this.validateWordAlignField(alignField)
 
         this.setState({ wordAlignsValid: alignInfo.wordAlignsValid })
+        
+        const src2tgt = createAlignMapping(alignInfo.aligns, 0, this.props.srcWords.length)
+        const tgt2src = createAlignMapping(alignInfo.aligns, 1, this.props.tgtWords.length)
+        const srcWords = addAlignmentToWordsObj(this.props.srcWords, src2tgt)
+        const tgtWords = addAlignmentToWordsObj(this.props.tgtWords, tgt2src)
 
         this.props.onWordAlignFetch({
             wordAlignsStr: alignInfo.wordAlignsStr,
             wordAligns: alignInfo.aligns,
-            src2tgt: createAlignMapping(alignInfo.aligns, 0, this.props.srcWords.length),
-            tgt2src: createAlignMapping(alignInfo.aligns, 1, this.props.tgtWords.length)
+            srcWords: srcWords,
+            tgtWords: tgtWords
         })
     }
 
     async fetchWordAligns() {
-        if (this.props.srcTok.trim() !== "" && this.props.tgtTok.trim() !== "") {
+        if (this.props.srcTokStr.trim() !== "" && this.props.tgtTokStr.trim() !== "") {
             // Add class to the previous section so that loading CSS is set on current element
             this.aligner.current.previousElementSibling.classList.add("loading")
 
             let url = new URL(ALIGN_URL)
             let alignFormData = new FormData()
-            alignFormData.append("src_sentence", this.props.srcTok)
-            alignFormData.append("tgt_sentence", this.props.tgtTok)
+            alignFormData.append("src_sentence", this.props.srcTokStr)
+            alignFormData.append("tgt_sentence", this.props.tgtTokStr)
             url.search = new URLSearchParams(alignFormData).toString()
 
             const alignStr = (await fetchUrl(url)).word_aligns
@@ -130,11 +135,11 @@ class AlignSec extends PureComponent {
     }
 
     async fetchAstred() {
-        if (this.props.srcTok.trim() !== "" && this.props.tgtTok.trim() !== "" && this.props.wordAlignsStr.trim() !== "") {
+        if (this.props.srcTokStr.trim() !== "" && this.props.tgtTokStr.trim() !== "" && this.props.wordAlignsStr.trim() !== "") {
             let url = new URL(ASTRED_URL)
             let alignFormData = new FormData()
-            alignFormData.append("src_sentence", this.props.srcTok)
-            alignFormData.append("tgt_sentence", this.props.tgtTok)
+            alignFormData.append("src_sentence", this.props.srcTokStr)
+            alignFormData.append("tgt_sentence", this.props.tgtTokStr)
             alignFormData.append("aligns", this.props.wordAlignsStr)
             alignFormData.append("src_lang", this.props.srcLang)
             alignFormData.append("tgt_lang", this.props.tgtLang)
@@ -182,16 +187,16 @@ class AlignSec extends PureComponent {
                         <div>
                             <TextInput
                                 label="Tokenized source sentence"
-                                name="srcTok"
-                                value={this.props.srcTok}
-                                invalid={this.props.srcTok.trim() === ""}
+                                name="srcTokStr"
+                                value={this.props.srcTokStr}
+                                invalid={this.props.srcTokStr.trim() === ""}
                                 onChange={evt => this.handleManualTokChange(evt.target)}
                             />
                             <TextInput
                                 label="Tokenized target sentence"
-                                name="tgtTok"
-                                value={this.props.tgtTok}
-                                invalid={this.props.tgtTok.trim() === ""}
+                                name="tgtTokStr"
+                                value={this.props.tgtTokStr}
+                                invalid={this.props.tgtTokStr.trim() === ""}
                                 onChange={evt => this.handleManualTokChange(evt.target)}
                             />
                             <TextInput
@@ -205,8 +210,8 @@ class AlignSec extends PureComponent {
                             />
                         </div>
                         <div className="buttons">
-                            <input type="button" value="Suggest alignments" disabled={!valuesNotEmpty(this.props.srcTok, this.props.tgtTok)} name="fetch-aligns-btn" onClick={this.fetchWordAligns} />
-                            <input type="submit" value="Continue" disabled={!valuesNotEmpty(this.props.srcTok, this.props.tgtTok, this.props.wordAlignsStr) || !this.state.wordAlignsValid} name="calculate-astred-btn" />
+                            <input type="button" value="Suggest alignments" disabled={!valuesNotEmpty(this.props.srcTokStr, this.props.tgtTokStr)} name="fetch-aligns-btn" onClick={this.fetchWordAligns} />
+                            <input type="submit" value="Continue" disabled={!valuesNotEmpty(this.props.srcTokStr, this.props.tgtTokStr, this.props.wordAlignsStr) || !this.state.wordAlignsValid} name="calculate-astred-btn" />
                         </div>
                     </form>
                     <AlignViz

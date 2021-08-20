@@ -19,10 +19,10 @@ class TokenizeSec extends PureComponent {
         this.tokenizer = React.createRef();
     }
 
-    async getTok(side) {
+    async getTokStr(side) {
         let url = new URL(TOKENIZE_URL)
         let reqData = new FormData()
-        reqData.append("sentence", this.props[side])
+        reqData.append("sentence", this.props[`${side}Str`])
         reqData.append("lang", this.props[`${side}Lang`])
         url.search = new URLSearchParams(reqData).toString()
 
@@ -55,8 +55,8 @@ class TokenizeSec extends PureComponent {
         evt.preventDefault();
 
         this.tokenizer.current.classList.add("loading")
-        const [srcTok, tgtTok] = await Promise.all([this.getTok("src"), this.getTok("tgt")])
-        this.props.onTokenizeFetch({ srcTok: srcTok, tgtTok: tgtTok })
+        const [srcTokStr, tgtTokStr] = await Promise.all([this.getTokStr("src"), this.getTokStr("tgt")])
+        this.props.onTokenizeFetch({ srcTokStr: srcTokStr, tgtTokStr: tgtTokStr })
         this.tokenizer.current.classList.remove("loading")
     }
 
@@ -79,8 +79,8 @@ class TokenizeSec extends PureComponent {
                         <div>
                             <TextInput
                                 label="Source sentence"
-                                name="src"
-                                value={this.props.src}
+                                name="srcStr"
+                                value={this.props.srcStr}
                                 onChange={evt => this.handleTextFieldChange(evt.target)}
                             />
                             <LangSelect
@@ -94,8 +94,8 @@ class TokenizeSec extends PureComponent {
                         <div>
                             <TextInput
                                 label="Target sentence"
-                                name="tgt"
-                                value={this.props.tgt}
+                                name="tgtStr"
+                                value={this.props.tgtStr}
                                 onChange={evt => this.handleTextFieldChange(evt.target)}
                             />
                             <LangSelect

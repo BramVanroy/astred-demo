@@ -102,3 +102,19 @@ export function scrollIntoView(el) {
     block: "start"
   })
 }
+
+export function addAlignmentToWordsObj(words, mapping) {
+  return Object.entries(mapping).map(([idx, aligned_idxs]) => {
+    return {text: words[idx].text, alignedIdxs: aligned_idxs}
+  })
+}
+
+export function removeItemfromArray(array, value) {
+  // because you cannot simply compare arrays in JS, we need to stringify them first
+  const strArray = array.map(JSON.stringify)
+  const idx = strArray.indexOf(JSON.stringify(value))
+  if (idx > -1) {
+    array.splice(idx, 1)
+  }
+  return array
+}

@@ -19,18 +19,16 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      src: 'Sometimes she asks me why I used to call her father Harold',
-      tgt: 'Soms vraagt ze waarom ik haar vader Harold noemde',
+      srcStr: 'Sometimes she asks me why I used to call her father Harold',
+      tgtStr: 'Soms vraagt ze waarom ik haar vader Harold noemde',
       srcLang: 'en',
       tgtLang: 'nl',
-      srcTok: '',
-      srcWord: [],
-      tgtTok: '',
-      tgtWord: [],
+      srcTokStr: '',
+      srcWords: [],
+      tgtTokStr: '',
+      tgtWords: [],
       wordAlignsStr: '',
       wordAligns: [],
-      src2tgt: [],
-      tgt2src: [],
       astred: {}
     };
     // Languages that we support and their abbreviations for the parsers
@@ -45,15 +43,15 @@ class App extends Component {
   }
 
   tokStrToWords(tok) {
-    return tok.split(" ").filter(Boolean)
+    return tok.split(" ").filter(Boolean).map(text => {return {text: text}})
   }
 
   onTokenizeFetch(tokenizeInfo) {
     this.setState({
       ...tokenizeInfo,
       ...{
-        srcWords: this.tokStrToWords(tokenizeInfo.srcTok),
-        tgtWords: this.tokStrToWords(tokenizeInfo.tgtTok),
+        srcWords: this.tokStrToWords(tokenizeInfo.srcTokStr),
+        tgtWords: this.tokStrToWords(tokenizeInfo.tgtTokStr),
 
       }
     })
@@ -64,12 +62,12 @@ class App extends Component {
   }
 
   onAppStateChange(prop, val) {
-    if (prop === "srcTok") {
+    if (prop === "srcTokStr") {
       // Filter false-y values (particularly empty strings)
-      this.setState({ srcWords: this.tokStrToWords(val), srcTok: val })
+      this.setState({ srcWords: this.tokStrToWords(val), srcTokStr: val })
       return
-    } else if (prop === "tgtTok") {
-      this.setState({ tgtWords: this.tokStrToWords(val), tgtTok: val })
+    } else if (prop === "tgtTokStr") {
+      this.setState({ tgtWords: this.tokStrToWords(val), tgtTokStr: val })
       return
     }
 
@@ -93,9 +91,9 @@ class App extends Component {
           <TokenizeSec
             onAppStateChange={this.onAppStateChange}
             onTokenizeFetch={this.onTokenizeFetch}
-            src={this.state.src}
+            srcStr={this.state.srcStr}
             srcLang={this.state.srcLang}
-            tgt={this.state.tgt}
+            tgtStr={this.state.tgtStr}
             tgtLang={this.state.tgtLang}
             langs={this.langs} />
 
@@ -104,14 +102,12 @@ class App extends Component {
             onAppStateChange={this.onAppStateChange}
             onWordAlignFetch={this.onWordAlignFetch}
             onAstredFetch={this.onAstredFetch}
-            srcTok={this.state.srcTok}
+            srcTokStr={this.state.srcTokStr}
             srcWords={this.state.srcWords}
-            tgtTok={this.state.tgtTok}
+            tgtTokStr={this.state.tgtTokStr}
             tgtWords={this.state.tgtWords}
             wordAlignsStr={this.state.wordAlignsStr}
             wordAligns={this.state.wordAligns}
-            src2tgt={this.state.src2tgt}
-            tgt2src={this.state.tgt2src}
             srcLang={this.state.srcLang}
             tgtLang={this.state.tgtLang}
           />
