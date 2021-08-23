@@ -28,7 +28,8 @@ load all the models.
 uvicorn main:app --reload --port 5000
 ```
 
-You can change the port, but **make sure that you verify that the end points are correct** in `astred-demo-frontend/src/constants.js`.
+You can change the port, but **make sure that you verify that the end points are correct** in
+`astred-demo-frontend/src/constants.js`.
 
 ## Available scripts in the front-end directory
 
@@ -56,3 +57,12 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information
 on how best to deploy the front-end app.
+
+## Important notes before making app available online
+
+- Make sure to adapt CORS in `astred-demo-api/src/main.py` to your needs. By default it accepts everything (useful 
+  for local development) but that is likely not what you want. You probably want to restrict access to the same server
+  that the front-end is running off. See the
+  [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/cors/#use-corsmiddleware) for more.
+- Make sure that the end points in `astred-demo-frontend/src/constants.js` are correct. Change the domain (localhost)
+  and ports to your set up.
