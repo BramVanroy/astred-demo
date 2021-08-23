@@ -3,17 +3,19 @@
 ## API installation
 
 The API runs on FastAPI (Python) to provide an easy access point for the demo. The Python dependencies
-can be installed with `pip`:
+can be installed with `pip` (but preferably in its own environment).
 
 - fastapi 
 - uvicorn
 - astred[parsers]
+- git+https://github.com/BramVanroy/awesome-align.git@astred_compat
 
 ### Install language models
 
 By default, the API assumes that English, French, Dutch, and German models are installed. You can change 
 the `languages` variables as you wish. The front-end will pick up this change accordingly. The language 
-models need to be installed, though. So to install the default models you can run the attached bash script.
+models need to be installed, though. So to install the default models you can run the attached bash script in
+in the `astred-demo-api` directory.
 
 ```shell
 sh install-default-models.sh
@@ -34,7 +36,7 @@ In the project directory, you can run:
 
 ### `npm install`
 
-To install all the requied dependencies for local development.
+To install all the requied dependencies for development. This is needed before you can run the following commands.
 
 ### `npm start`
 
