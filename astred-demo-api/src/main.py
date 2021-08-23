@@ -19,18 +19,27 @@ app.add_middleware(
 )
 
 aligner = Aligner(no_cuda=True)
-nlps = {
-    "en_spacy": spacy.load("en_core_web_sm"),
-    "en_stanza": load_parser("en", is_tokenized=True, tokenize_no_ssplit=True),
-    "nl_spacy": spacy.load("nl_core_news_sm"),
-    "nl_stanza": load_parser("nl", is_tokenized=True, tokenize_no_ssplit=True),
+
+languages = {
+    "en": {"spacy_model_name": "en_core_web_sm", "text": "English"},
+    "nl": {"spacy_model_name": "nl_core_news_sm", "text": "Dutch"},
+    "fr": {"spacy_model_name": "fr_core_news_sm", "text": "French"},
+    "de": {"spacy_model_name": "de_core_news_sm", "text": "German"},
 }
+
+
+nlps = {f"{lang}_spacy": spacy.load(d["spacy_model_name"], exclude=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"]) for lang, d in languages.items()}
+nlps = {**nlps, **{f"{lang}_stanza": load_parser(lang, is_tokenized=True, tokenize_no_ssplit=True) for lang in languages.keys()}}
+
+
+@app.get("/languages")
+async def get_languages():
+    return languages
 
 
 @app.get("/tokenize")
 async def tokenize(sentence: str, lang: str = "en"):
-    doc = nlps[f"{lang}_spacy"](sentence,
-                                disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])
+    doc = nlps[f"{lang}_spacy"](sentence)
 
     return {"sentence": sentence, "lang": lang,
             "tok": " ".join([token.text for token in doc])}
@@ -62,8 +71,9 @@ def get_word_info(sentence: Sentence, word_idx) -> Dict[str, Any]:
         "text": word.text,
         "lemma": word.lemma,
         "head": f"{sentence[word.head].id-1}-{sentence[word.head].text}" if word.head else "root",
-        "aligned_idxs": [w.id-1 for w in word.aligned],
+        "alignedIdxs": [w.id-1 for w in word.aligned],
         "pos": word.upos,
+        "deprel": word.deprel,
         "feats": word.feats,
         "cross": word.cross,
         "seq": {
@@ -75,8 +85,8 @@ def get_word_info(sentence: Sentence, word_idx) -> Dict[str, Any]:
             "cross": word.sacr_group.cross,
             "root": word.sacr_group.root.text if word.sacr_group.root else None
         },
-        "astred_op": word.tree.astred_op,
-        "label_changes": {idx-1: change for idx, change in word.changes().items()} if word.changes() else {},
+        "astredOp": word.tree.astred_op,
+        "labelChanges": {idx-1: change for idx, change in word.changes().items()} if word.changes() else {},
     }
 
 
@@ -116,7 +126,7 @@ async def astred(src_sentence: str, tgt_sentence: str, aligns: str, src_lang: st
                            },
                "spans": {
                    "src": src_groups,
-                   "tgt": tgt_groups}
-               }
+                   "tgt": tgt_groups
+               }}
 
     return results
