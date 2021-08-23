@@ -1,16 +1,13 @@
+@import "variables";
+
 #tokenize {
     form {
-        > div {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.36em;
-            label {
-                margin-left: 0.36em;
-                &:first-child {
-                    margin-left: 0;
-                    flex: 1;
-                }
-            }
+        grid-gap: 0.5em;
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr auto;
+        > input[type="submit"] {
+            grid-column: 1/3;
         }
     }
 }

@@ -2,42 +2,12 @@
 
 #align {
     form {
-        > div {
-            align-items: center;
-            label {
-                margin-bottom: 0.36em;
-            }
-            &.buttons {
-                justify-content: center;
-                display: flex;
-                input {
-                    flex: 1;
-                    &:nth-child(2) {
-                        margin-left: 1em;
-                    }
-                }
-            }
-        }
-        input[type="button"] {
-            height: auto;
-            padding: 0.6em 0.4em;
-            text-align: center;
-            cursor: pointer;
-            color: white;
-            background: desaturate(lighten($green, 10%), 5%);
-            border: 0 none;
-            font-weight: bold;
-            transition: transform 200ms;
-            &:hover {
-                background: $green;
-            }
-            &:active {
-                transform: scale(0.98);
-            }
-            &[disabled] {
-                cursor: not-allowed;
-                background: darken(#ebebeb, 4%);
-              }
+        grid-gap: 0.5em;
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr;
+        label {
+            grid-column: 1/3;
         }
     }
 }

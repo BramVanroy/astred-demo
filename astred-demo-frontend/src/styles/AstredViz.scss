@@ -1,6 +1,11 @@
 @import "variables";
 
 .astred-viz {
+    .sentence {
+        &.tgt {
+            margin-bottom: 8px;
+        }
+    }
     rect {
         stroke-width: 2px;
         fill: none;
@@ -8,7 +13,7 @@
     .seqGroups {
         line,
         rect {
-            stroke: $green;
+            stroke: $mainColor;
         }
     }
     .sacrGroups {
@@ -19,7 +24,7 @@
     }
 }
 
-.has-overlay {
+.has-overlayed-lines {
     .alignments {
         line {
             stroke: #ccc;

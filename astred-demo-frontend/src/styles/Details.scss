@@ -1,0 +1,58 @@
+@import "variables";
+
+.details {
+    > p {
+        position: relative;
+        margin: 2em auto;
+        height: 2px;
+        background: $mainFontColor;
+        button {
+            display: block;
+            margin: 0 auto;
+            float: right;
+            cursor: pointer;
+            padding: 0.36em 0.48em;
+            border-radius: 2px;
+            background: $mainFontColor;
+            color: white;
+            border: 2px solid $mainFontColor;
+            box-shadow: 0 0 4px 0 white;
+            transform: translateY(-50%);
+            transition: all 200ms;
+            font-size: 0.8em;
+            &:hover {
+                background: white;
+                color: $mainFontColor;
+            }
+            &:active {
+                transform: translateY(-50%) scale(0.95);
+            }
+        }
+    }
+    > .content {
+        display: none;
+        padding: 0.48em 1em;
+        border: 2px solid $mainFontColor;
+        border-top: 0 none;
+        margin-bottom: 2em;
+    }
+
+    &.open {
+        > p {margin-bottom: 0;}
+        > .content {
+            display: block;
+        }
+    }
+}
+
+section:nth-child(odd),
+#page-header:nth-child(odd) {
+    .details > p button {
+        color: #f5f5f5;        
+        box-shadow: 0 0 4px 0 #f5f5f5;
+        &:hover {
+            background: #f5f5f5;
+            color: $mainFontColor;
+        }
+    }
+}

@@ -1,8 +1,14 @@
 #page-footer {
     max-width: 1024px;
     margin: 1em auto 0;
+    padding: 1em;
     border-top: 4px solid #ebebeb;
+    font-size: 0.85em;
     p {
         text-align: center;
+        margin: 0;
+        &:not(:first-child) {
+            margin-top: 0.25em;
+        }
     }
 }

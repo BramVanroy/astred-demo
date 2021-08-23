@@ -8,7 +8,7 @@
     max-width: 100%;
     overflow-x: auto;
     text-align: center;
-    height: 240px;
+    height: 200px;
     font-size: 20px;
     > svg {
         height: 100%;
@@ -22,7 +22,7 @@
             stroke: #333;
             stroke-width: 2px;
             &.highlight {
-                stroke: $hoverGreen;
+                stroke: $highlightColor;
             }
         }
     }
@@ -30,11 +30,8 @@
     .sentence {
         white-space: nowrap;
         z-index: 10;
-        &.src {            
-            margin-top: 6px;
-        }
-        &.tgt {
-            margin-bottom: 6px;
+        &.src {
+            margin-top: 8px;
         }
         .word {
             display: inline-block;
@@ -47,18 +44,18 @@
 
             &.highlight:not(.alignable),
             &:hover {
-                color: $hoverGreen;
+                color: $highlightColor;
             }
             &.alignable, &.removable {
                 position: relative;
-                border: 1px dashed $hoverGreen;
+                border: 1px dashed $mainColorHover;
                 &::before {
                     content: "+";
                     position: absolute;
                     top: 0;
                     left: 0;
                     transform: translate(-50%, -50%);
-                    background: $hoverGreen;
+                    background: $mainColorHover;
                     font-size: 12px;
                     border-radius: 36px;
                     width: 16px;
@@ -69,10 +66,10 @@
                 }
             }
             &.removable {
-                border-color: red;
+                border-color: $invalid;
                 &::before {
                     content: "-";
-                    background: desaturate(red, 24%);
+                    background: $invalid;
                 }
             }
         }

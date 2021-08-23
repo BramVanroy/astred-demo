@@ -1,0 +1,28 @@
+@import "variables";
+
+#error {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: rgba(0,0,0,0.25);
+    h2 {
+        font-weight: 400;
+        span {
+            font-weight: 700;
+        }
+    }
+    .content {
+        left: 50%;
+        transform: translate(-50%, -50%);
+        top: 40%;
+        position: absolute;
+        background-color: white;
+        max-width: 768px;
+    }
+    .error-msg {
+        color: $invalid;
+    }
+}

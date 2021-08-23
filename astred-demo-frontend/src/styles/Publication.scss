@@ -1,0 +1,33 @@
+@import "variables";
+
+.publication {
+    display: flex;
+    align-items: flex-start;
+    p {
+        margin: 0;
+        flex: 1;
+    }
+    > a {
+        margin-right: 1em;
+        flex: 0;
+        transition: color 150ms;
+        border: 0 none;
+
+        svg.svg-inline--fa {
+            width: 2em;
+            height: 2em;
+        }
+    }
+}
+
+section:nth-child(odd),
+section:nth-child(odd),
+#page-header:nth-child(odd),
+#page-header:nth-child(odd) {
+    .publication > a {
+        color: $mainColor;
+        &:hover {
+            color: $mainColorHover;
+        }
+    }
+}

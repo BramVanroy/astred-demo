@@ -1,19 +1,20 @@
-import React, { Component, Fragment } from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFont, faLanguage, faAsterisk, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
-
-
 import '../styles/App.css';
 
-import AlignSec from './Align'
-import TokenizeSec from './Tokenize'
-import AstredSec from './Astred'
-import PageFooter from './PageFooter'
+import {faAsterisk, faFileAlt, faFileCode, faFont, faLanguage, faPencilAlt} from '@fortawesome/free-solid-svg-icons';
+import React, {Component, Fragment} from 'react';
+import AlignSec from './Align';
+import AstredSec from './Astred';
+import Error from './Error';
+import {LANG_URL} from '../constants';
+import {library} from '@fortawesome/fontawesome-svg-core';
+import PageFooter from './PageFooter';
+import PageHeader from './PageHeader';
+import PageIntroduction from './PageIntroduction';
+import {scrollIntoView} from '../utils';
+import TokenizeSec from './Tokenize';
 
-import { scrollIntoView } from '../utils'
 
-
-library.add(faFont, faLanguage, faAsterisk, faPencilAlt)
+library.add(faAsterisk, faFileAlt, faFileCode, faFont, faLanguage, faPencilAlt);
 
 class App extends Component {
   constructor(props) {
@@ -29,12 +30,14 @@ class App extends Component {
       tgtWords: [],
       wordAlignsStr: '',
       wordAligns: [],
-      astred: {}
+      astred: {},
+      languages: [],
+      error: '',
     };
-    // Languages that we support and their abbreviations for the parsers
-    this.langs = [['English', 'en'], ['Dutch', 'nl']]
 
+    this.fetchUrl = this.fetchUrl.bind(this);
     this.onAppStateChange = this.onAppStateChange.bind(this);
+    this.onError = this.onError.bind(this);
     this.onWordAlignFetch = this.onWordAlignFetch.bind(this);
     this.onTokenizeFetch = this.onTokenizeFetch.bind(this);
     this.onAstredFetch = this.onAstredFetch.bind(this);
@@ -42,8 +45,26 @@ class App extends Component {
     this.alignSec = React.createRef();
   }
 
+  onError(errorStr) {
+    this.setState({'error': errorStr});
+  }
+
+  async fetchLanguages() {
+    // Languages that we support and their abbreviations for the parsers
+    // We assume that Dutch (nl) and English (en) are always included because we have en and nl defaults
+    const langInfo = (await this.fetchUrl(LANG_URL));
+
+    if (langInfo && Object.keys(langInfo).length > 0) {
+      this.setState({languages: Object.entries(langInfo).map(([abbr, info]) => {
+        return [info.text, abbr];
+      })});
+    }
+  }
+
   tokStrToWords(tok) {
-    return tok.split(" ").filter(Boolean).map(text => {return {text: text}})
+    return tok.split(' ').filter(Boolean).map((text) => {
+      return {text: text};
+    });
   }
 
   onTokenizeFetch(tokenizeInfo) {
@@ -53,52 +74,81 @@ class App extends Component {
         srcWords: this.tokStrToWords(tokenizeInfo.srcTokStr),
         tgtWords: this.tokStrToWords(tokenizeInfo.tgtTokStr),
 
-      }
-    })
+      },
+    });
     // Need to validate here for cases where we tokenize, then remove everything in tok field, and then tokenize again
     // otherwise the field will not be revalidated and still considered invalid
-    this.alignSec.current.validateAllFields(true)    
-    scrollIntoView(document.querySelector("#align"))
+    this.alignSec.current.validateAllFields(true);
+    scrollIntoView(document.querySelector('#align'));
   }
 
   onAppStateChange(prop, val) {
-    if (prop === "srcTokStr") {
+    if (prop === 'srcTokStr') {
       // Filter false-y values (particularly empty strings)
-      this.setState({ srcWords: this.tokStrToWords(val), srcTokStr: val })
-      return
-    } else if (prop === "tgtTokStr") {
-      this.setState({ tgtWords: this.tokStrToWords(val), tgtTokStr: val })
-      return
+      this.setState({srcWords: this.tokStrToWords(val), srcTokStr: val});
+      return;
+    } else if (prop === 'tgtTokStr') {
+      this.setState({tgtWords: this.tokStrToWords(val), tgtTokStr: val});
+      return;
     }
 
-    this.setState({ [prop]: val })
+    this.setState({[prop]: val});
   }
 
   onAstredFetch(astredInfo) {
-    this.setState({ astred: astredInfo })
-    scrollIntoView(document.querySelector("#astred"))
+    this.setState({astred: astredInfo});
+    scrollIntoView(document.querySelector('#astred'));
   }
 
   onWordAlignFetch(alignInfo) {
-    this.setState(alignInfo)
-    scrollIntoView(document.querySelector("#align"))
+    this.setState(alignInfo);
+  }
+
+  componentDidMount() {
+    this.fetchLanguages();
+  }
+
+  /**
+ * Send GET (fetch) request to the API and return the Promise.
+ * @param {URL} url URL to fetch
+ * @return {Promise} Promise to the result of the API
+ */
+  async fetchUrl(url) {
+    return fetch(url).then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.text().then((text) => {
+          throw Error(text);
+        });
+      }
+    },
+    ).catch((errStr) => {
+      this.onError(String(errStr));
+    });
   }
 
   render() {
     return (
       <Fragment>
+        {this.state.error && <Error error={this.state.error}/>}
+        <PageHeader />
         <main className="page-wrapper">
+          <PageIntroduction languages={this.state.languages.map((langInfo) => langInfo[0])}/>
           <TokenizeSec
+            fetchUrl={this.fetchUrl}
             onAppStateChange={this.onAppStateChange}
             onTokenizeFetch={this.onTokenizeFetch}
             srcStr={this.state.srcStr}
             srcLang={this.state.srcLang}
             tgtStr={this.state.tgtStr}
             tgtLang={this.state.tgtLang}
-            langs={this.langs} />
+            languages={this.state.languages}
+            onError={this.onError} />
 
           <AlignSec
             ref={this.alignSec}
+            fetchUrl={this.fetchUrl}
             onAppStateChange={this.onAppStateChange}
             onWordAlignFetch={this.onWordAlignFetch}
             onAstredFetch={this.onAstredFetch}
@@ -110,15 +160,17 @@ class App extends Component {
             wordAligns={this.state.wordAligns}
             srcLang={this.state.srcLang}
             tgtLang={this.state.tgtLang}
+            onError={this.onError}
           />
 
           <AstredSec
             astred={this.state.astred}
+            onError={this.onError}
           />
         </main>
         <PageFooter />
       </Fragment>
-    )
+    );
   }
 }
 
