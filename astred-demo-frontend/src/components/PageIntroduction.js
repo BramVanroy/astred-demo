@@ -13,7 +13,7 @@ class PageIntroduction extends PureComponent {
           <div>
             <h2>Introduction</h2>
             <p>This demo illustrates a number of metrics that quantify the syntactic differences between two sentences. These sentences can (but need not) be written in a different language. Such metrics are for instance useful when comparing a (machine) translation with the original source text, to find differences and similarities between two different translations, or to see how a machine translation differs from a reference translation.</p>
-            <p>The demo allows you to provide two sentences and their respective language (currently <span className="languages">{this.props.languages.join(', ')}</span> {this.props.languages.length > 1 ? 'are' : 'is'} supported). In the following steps your given text will be automatically tokenized and aligned, but you can improve the suggestions at every step. Finally, after analyzing the processed data, the resulting metrics are given for each word.</p>
+            <p>The demo allows you to provide two sentences and their respective language (currently <span className="languages">{this.props.languages.join(', ')}</span> {this.props.languages.length > 1 ? 'are' : 'is'} supported). In the following steps your given text will be automatically tokenized and aligned, but you can improve the suggestions at every step. Finally, after parsing and analyzing the processed data, the resulting metrics are given for each word.</p>
           </div>
           <div id="publications">
             <h2>Publications</h2>
