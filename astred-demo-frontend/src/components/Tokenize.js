@@ -78,7 +78,7 @@ class TokenizeSec extends PureComponent {
             For instance, <em>you&apos;re</em> consists of the tokens <em>you</em> and <em>&apos;re</em>. For our linguistic analysis, we therefore have
             to make sure that our input is tokenized: all tokens need a space between them, e.g. <em>you &apos;re</em>. Another example is that syntactic punctuation
             is often a token by itself and separate from other tokens, except in cases where it is clearly part of that token, as indicated by the <em>you &apos;re</em> example.</p>
-            <p>The automatic tokenization is done by <a href="https://spacy.io/" title="spaCy home page" target="_blank" rel="noreferrer noopener">spaCy</a>.</p>
+            <p>Automatic tokenization is done by <a href="https://spacy.io/" title="spaCy home page" target="_blank" rel="noreferrer noopener">spaCy</a>.</p>
           </Details>
 
           <form onSubmit={this.handleSubmit}>
