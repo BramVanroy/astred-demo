@@ -108,6 +108,10 @@ class App extends Component {
     this.fetchLanguages();
   }
 
+  static getDerivedStateFromError(error) {
+    return {error: error.toString()};
+  }
+
   /**
  * Send GET (fetch) request to the API and return the Promise.
  * @param {URL} url URL to fetch
@@ -131,9 +135,10 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        {this.state.error && <Error error={this.state.error}/>}
         <PageHeader />
         <main className="page-wrapper">
+          {this.state.error ? <Error error={this.state.error}/> :
+        <Fragment>
           <PageIntroduction languages={this.state.languages.map((langInfo) => langInfo[0])}/>
           <TokenizeSec
             fetchUrl={this.fetchUrl}
@@ -167,6 +172,8 @@ class App extends Component {
             astred={this.state.astred}
             onError={this.onError}
           />
+
+        </Fragment>}
         </main>
         <PageFooter />
       </Fragment>
