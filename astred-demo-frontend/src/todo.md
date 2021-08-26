@@ -1,5 +1,0 @@
-- implement checkboxes for both src and target to indicate whether or not they are tokenised. Do not allow for the correction of tokenisation (not worth the time and obstructrs user-friendliness). Either manual tokenisation or automatic, but not with tokenisation suggestions
-- restart button (= refresh)
-- SECTION: use tokenised data to suggest alignments which the user can then correct
-- SECTION: visualisation of the results given the tokenised data
-- make sections disappear (but still in DOM, just hidden) when filled in so that user does not get confused. Allow them to go back a step though.
