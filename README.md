@@ -37,11 +37,11 @@ In the project directory, you can run:
 
 ### `npm install`
 
-To install all the requied dependencies for development. This is needed before you can run the following commands.
+to install all the required dependencies for development. This is needed before you can run the following commands.
 
 ### `npm start`
 
-Runs the app in the development mode.
+Runs the app in the development mode (not necessary for production).
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
