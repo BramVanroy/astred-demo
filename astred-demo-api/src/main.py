@@ -73,7 +73,6 @@ def get_word_info(sentence: Sentence, word_idx) -> Dict[str, Any]:
         "head": f"{sentence[word.head].id-1}-{sentence[word.head].text}" if word.head else "root",
         "alignedIdxs": [w.id-1 for w in word.aligned],
         "pos": word.upos,
-        "deprel": word.deprel,
         "feats": word.feats,
         "cross": word.cross,
         "seq": {
@@ -86,6 +85,7 @@ def get_word_info(sentence: Sentence, word_idx) -> Dict[str, Any]:
             "root": word.sacr_group.root.text if word.sacr_group.root else None
         },
         "astredOp": word.tree.astred_op,
+        "deprel": word.deprel,
         "labelChanges": {idx-1: change for idx, change in word.changes().items()} if word.changes() else {},
     }
 
