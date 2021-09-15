@@ -178,7 +178,8 @@ class AlignViz extends PureComponent {
   }
 
   render() {
-    const isEmpty = !(this.props.srcWords && this.props.srcWords.length > 0 && this.props.tgtWords && this.props.tgtWords.length > 0 && this.props.wordAligns.length > 0);
+    console.log(this.props.tgtWords);
+    const isEmpty = !(this.props.srcWords && this.props.srcWords.length > 0 && this.props.tgtWords && this.props.tgtWords.length > 0);
 
     return (
       <output className={isEmpty ? 'align-viz empty' : 'align-viz'} ref={this.alignVizDom}>
@@ -198,8 +199,8 @@ class AlignViz extends PureComponent {
               <g className="alignments">
                 {this.props.wordAligns.map(([srcIdx, tgtIdx], lineIdx) => {
                   return <line key={lineIdx} src={srcIdx} tgt={tgtIdx} className={this.buildLineClass(srcIdx, tgtIdx)}></line>;
-                },
-                )}
+                })
+                }
               </g>
             </svg>
 

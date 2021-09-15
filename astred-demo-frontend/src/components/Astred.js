@@ -18,11 +18,11 @@ class AstredSec extends PureComponent {
     this.wordProps = {
       text: 'the given token',
       lemma: 'lemma (base form)',
-      deprel: 'dependency label',
       head: 'head of current word in dependency tree',
       pos: 'universal part of speech tag',
       feats: 'morphological features',
       cross: 'number of times this word\'s alignment line crosses other alignments',
+      deprel: 'dependency label',
       labelChanges: 'whether the dependency label differs between this word and its aligned words',
       astredOp: 'which tree edit operation has to occur in the ASTrED trees (see papers for more info)',
     };

@@ -3,7 +3,10 @@ import '../styles/Align.css';
 import {addAlignmentToWordsObj,
   createAlignMapping,
   createAlignsFromStr,
-  valuesNotEmpty, zip} from '../utils';
+  resetAlignedIdxs,
+  tokStrToWords,
+  valuesNotEmpty,
+  zip} from '../utils';
 import {ALIGN_URL, ASTRED_URL} from '../constants';
 import React, {PureComponent} from 'react';
 import AlignViz from './AlignViz';
@@ -32,12 +35,20 @@ class AlignSec extends PureComponent {
     this.aligner = React.createRef();
   }
 
-  handleManualTokChange(textField) {
+  handleManualTokChange(side, textField) {
+    const prevNWords = side === 'src' ? this.props.srcWords.length : this.props.tgtWords.length;
     const val = this.validateTextField(textField);
-    this.props.onAppStateChange(textField.name, val);
-    // Also validate word alignments according to new tokens but do not "reportValidity" as that will trigger a focus
-    const alignInfo = this.validateWordAlignField(this.aligner.current.querySelector('input[name=\'wordAlignsStr\']'), false);
-    this.setState({wordAlignsValid: alignInfo.wordAlignsValid});
+    const nWords = tokStrToWords(val).length;
+    this.props.onAppStateChange(textField.name, val, () => {
+      console.log('triggered');
+      if (prevNWords !== nWords) {
+        this.updateAlignFieldWithValue('', false);
+      } else {
+        // Also validate word alignments according to new tokens but do not "reportValidity" as that will trigger a focus
+        const alignInfo = this.validateWordAlignField(this.aligner.current.querySelector('input[name=\'wordAlignsStr\']'), false);
+        this.setState({wordAlignsValid: alignInfo.wordAlignsValid});
+      }
+    });
   }
 
   validateTextField(textField) {
@@ -67,28 +78,28 @@ class AlignSec extends PureComponent {
 
   validateWordAlignField(alignField, reportValidity = true) {
     const alignStr = alignField.value;
-
-    if (alignStr.trim() === '') {
-      alignField.setCustomValidity('Field cannot be empty or contain only spaces.');
-    }
-
-    // returns a tuple: [aligns (if any), bool(validAligns)]
-    const alignsTuple = createAlignsFromStr(alignStr.trim());
     let wordAlignsValid = false;
 
     // set aligns to previous aligns so that the visualizer still works
     // but the aligns will still be invalid (so user cannot continue to ASTrED due to state.wordAlignsValid)
     let aligns = this.props.wordAligns;
 
-    if (!alignsTuple[1]) {
-      alignField.setCustomValidity('Word alignments need to be of the format i-j for each source and target index pair.');
+    if (alignStr.trim() === '') {
+      alignField.setCustomValidity('Field cannot be empty or contain only spaces.');
+      aligns = [];
     } else {
-      if (this.alignsCorrespondToWords(alignsTuple[0])) {
-        alignField.setCustomValidity('');
-        wordAlignsValid = true;
-        aligns = alignsTuple[0];
+      // returns a tuple: [aligns (if any), bool(validAligns)]
+      const alignsTuple = createAlignsFromStr(alignStr.trim());
+      if (!alignsTuple[1]) {
+        alignField.setCustomValidity('Word alignments need to be of the format i-j for each source and target index pair.');
       } else {
-        alignField.setCustomValidity('The indices given in the word alignments must correspond to words. An index that you provided is not correct. Keep in mind that the indices are zero-based, so the first element has index 0.');
+        if (this.alignsCorrespondToWords(alignsTuple[0])) {
+          alignField.setCustomValidity('');
+          wordAlignsValid = true;
+          aligns = alignsTuple[0];
+        } else {
+          alignField.setCustomValidity('The indices given in the word alignments must correspond to words. An index that you provided is not correct. Keep in mind that the indices are zero-based, so the first element has index 0.');
+        }
       }
     }
 
@@ -97,8 +108,8 @@ class AlignSec extends PureComponent {
     return {wordAlignsStr: alignStr, wordAlignsValid: wordAlignsValid, aligns: aligns};
   }
 
-  handleManualAlignChange(alignField) {
-    const alignInfo = this.validateWordAlignField(alignField);
+  handleManualAlignChange(alignField, reportValidity = true) {
+    const alignInfo = this.validateWordAlignField(alignField, reportValidity);
 
     this.setState({wordAlignsValid: alignInfo.wordAlignsValid});
 
@@ -113,6 +124,9 @@ class AlignSec extends PureComponent {
       const tgt2src = createAlignMapping(alignInfo.aligns, 'tgt', this.props.tgtWords.length);
       srcWords = addAlignmentToWordsObj(this.props.srcWords, src2tgt);
       tgtWords = addAlignmentToWordsObj(this.props.tgtWords, tgt2src);
+    } else {
+      srcWords = resetAlignedIdxs(this.props.srcWords);
+      tgtWords = resetAlignedIdxs(this.props.tgtWords);
     }
 
     this.props.onWordAlignFetch({
@@ -165,10 +179,10 @@ class AlignSec extends PureComponent {
     }
   }
 
-  updateAlignFieldWithValue(alignStr) {
+  updateAlignFieldWithValue(alignStr, reportValidity = true) {
     const alignField = this.aligner.current.querySelector('input[name=\'wordAlignsStr\']');
     alignField.value = alignStr;
-    this.handleManualAlignChange(alignField);
+    this.handleManualAlignChange(alignField, reportValidity);
   }
 
   handleSubmit(evt) {
@@ -193,7 +207,7 @@ class AlignSec extends PureComponent {
           <h2>Word alignment</h2>
           <p>Here you can word-align the tokenized sentences and make changes to the suggested tokens. To ease the process, you can request suggestions for automatic word alignments. These are not always very accurate, so it is recommended to use these as guidelines or a starting point and then manually correct them.</p>
           <p>You can change the word alignments either by typing them (<code>src_word_idx-tgt_word_idx</code>; start counting at 0), or by clicking. First click on a word and then click on the target word
-          you wish to align it with. To remove an alignment, do the same.</p>
+          you wish to align it with. To remove an alignment, do the same. If you add or remove a token in the text fields, the word alignments will reset.</p>
 
           <Details>
             <p>Word alignment is the procedure of connecting (aligning) a word with its translation or corresponding meaning equivalent. As a rule for this tool, you should align the smallest possible meaningful entities. This is not always possible, however, for instance in multi-word expressions or free translations. In such cases you can align a word with multiple others. You can also remove an alignment if there is no meaning-equivalent available.</p>
@@ -205,13 +219,13 @@ class AlignSec extends PureComponent {
               label="Tokenized source sentence"
               name="srcTokStr"
               value={this.props.srcTokStr}
-              onChange={(evt) => this.handleManualTokChange(evt.target)}
+              onChange={(evt) => this.handleManualTokChange('src', evt.target)}
             />
             <TextInput
               label="Tokenized target sentence"
               name="tgtTokStr"
               value={this.props.tgtTokStr}
-              onChange={(evt) => this.handleManualTokChange(evt.target)}
+              onChange={(evt) => this.handleManualTokChange('tgt', evt.target)}
             />
             <TextInput
               label="Word alignments"

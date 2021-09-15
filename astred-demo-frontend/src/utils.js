@@ -116,13 +116,24 @@ export function scrollIntoView(el) {
 
 /**
  * Adds aligned indices to all words in a given array of Words.
- * @param {Array.<number>} words An array of {@link Word} elements
+ * @param {Array.<Word>} words An array of {@link Word} elements
  * @param {Object.<number, Array.<number>>} mapping A mapping of index to aligned indices, e.g. src=>[tgt_idxs...] or tgt=>[src_ids...]
  * @return {Array.<Word>} The array of {@link Word} elements with alignedIdxs added based on the given mapping
  */
 export function addAlignmentToWordsObj(words, mapping) {
   return Object.entries(mapping).map(([idx, alignedIdxs]) => {
     return {text: words[idx].text, alignedIdxs: alignedIdxs};
+  });
+}
+
+/**
+ * Reset aligned indices to empty arrays for all words.
+ * @param {Array.<Word>} words An array of {@link Word} elements
+ * @return {Array.<Word>} The array of {@link Word} elements with alignedIdxs reset to an empty array
+ */
+export function resetAlignedIdxs(words) {
+  return words.map((word) => {
+    return {text: word.text, alignedIdxs: []};
   });
 }
 
@@ -140,4 +151,16 @@ export function removeItemfromArray(array, value) {
     array.splice(idx, 1);
   }
   return array;
+}
+
+/**
+ * Retrieving the tokens of an already tokenized string as an array.
+ * Also filter out any potential false-y values.
+ * @param {string} tok A string in which tokens are separated by white-space
+ * @return {Array.<string>} Array of tokens strings
+ */
+export function tokStrToWords(tok) {
+  return tok.split(' ').filter(Boolean).map((text) => {
+    return {text: text, alignedIdxs: []};
+  });
 }

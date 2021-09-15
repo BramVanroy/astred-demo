@@ -2,6 +2,7 @@ import '../styles/App.css';
 
 import {faAsterisk, faFileAlt, faFileCode, faFont, faLanguage, faPencilAlt} from '@fortawesome/free-solid-svg-icons';
 import React, {Component, Fragment} from 'react';
+import {scrollIntoView, tokStrToWords} from '../utils';
 import AlignSec from './Align';
 import AstredSec from './Astred';
 import Error from './Error';
@@ -10,7 +11,6 @@ import {library} from '@fortawesome/fontawesome-svg-core';
 import PageFooter from './PageFooter';
 import PageHeader from './PageHeader';
 import PageIntroduction from './PageIntroduction';
-import {scrollIntoView} from '../utils';
 import TokenizeSec from './Tokenize';
 
 
@@ -51,7 +51,6 @@ class App extends Component {
 
   async fetchLanguages() {
     // Languages that we support and their abbreviations for the parsers
-    // We assume that Dutch (nl) and English (en) are always included because we have en and nl defaults
     const langInfo = (await this.fetchUrl(LANG_URL));
 
     if (langInfo && Object.keys(langInfo).length > 0) {
@@ -61,18 +60,12 @@ class App extends Component {
     }
   }
 
-  tokStrToWords(tok) {
-    return tok.split(' ').filter(Boolean).map((text) => {
-      return {text: text};
-    });
-  }
-
   onTokenizeFetch(tokenizeInfo) {
     this.setState({
       ...tokenizeInfo,
       ...{
-        srcWords: this.tokStrToWords(tokenizeInfo.srcTokStr),
-        tgtWords: this.tokStrToWords(tokenizeInfo.tgtTokStr),
+        srcWords: tokStrToWords(tokenizeInfo.srcTokStr),
+        tgtWords: tokStrToWords(tokenizeInfo.tgtTokStr),
 
       },
     });
@@ -82,17 +75,17 @@ class App extends Component {
     scrollIntoView(document.querySelector('#align'));
   }
 
-  onAppStateChange(prop, val) {
+  onAppStateChange(prop, val, cb=undefined) {
     if (prop === 'srcTokStr') {
       // Filter false-y values (particularly empty strings)
-      this.setState({srcWords: this.tokStrToWords(val), srcTokStr: val});
+      this.setState({srcWords: tokStrToWords(val), srcTokStr: val}, cb);
       return;
     } else if (prop === 'tgtTokStr') {
-      this.setState({tgtWords: this.tokStrToWords(val), tgtTokStr: val});
+      this.setState({tgtWords: tokStrToWords(val), tgtTokStr: val}, cb);
       return;
     }
 
-    this.setState({[prop]: val});
+    this.setState({[prop]: val}, cb);
   }
 
   onAstredFetch(astredInfo) {
