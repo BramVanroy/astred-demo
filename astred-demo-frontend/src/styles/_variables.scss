@@ -3,6 +3,7 @@ $mainColorHover: desaturate(darken($mainColor, 6%), 2%);
 $highlightColor: darken($mainColorHover, 20%);
 
 $mainFontColor: #3b3e4d;
+$linkColor: #6eaf90;
 
 $invalid: desaturate(lighten(red, 4%), 16%);
 $disabled: #dadada;

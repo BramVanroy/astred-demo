@@ -20,6 +20,7 @@ body {
     background: white;
     font-size: 16px;
     line-height: 1.5;
+    min-width: 370px;
     &::before {
         display: block;
         height: 4px;
@@ -35,13 +36,13 @@ body {
 
 a:link,
 a:visited {
-    color: $mainColorHover;
+    color: $linkColor;
     border-bottom: 0.2em solid #f5f5f5;
     text-decoration: none;
 }
 
 a:hover {
-    border-bottom-color: $mainColor;
+    border-bottom-color: $linkColor;
 }
 
 a:active {
@@ -163,4 +164,10 @@ abbr {
 
 .empty {
     display: none !important;
+}
+
+@media screen and (max-width: 480px) {
+    form {
+        font-size: 16px;
+    }
 }

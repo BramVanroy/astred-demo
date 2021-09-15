@@ -11,3 +11,15 @@
         }
     }
 }
+
+@media screen and (max-width: 480px) {
+    #tokenize form {
+        column-gap: 0;
+        label {
+            grid-column: 1 / -1;
+            select {
+                flex: 1;
+            }
+        }
+    }
+}
