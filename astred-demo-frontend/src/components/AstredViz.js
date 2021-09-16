@@ -86,8 +86,10 @@ class AstredViz extends AlignViz {
   onClickSentence(side, wordIdx) {
     // Overwrites super class method. In super class, click trigger manual align
     // here it triggers showing information
+    // "clicked" is both here in AlignViz and astred.js class. This is poor design on my part,
+    // but allows us at least to sub class AlignViz. Astred needs it to display clicked info
     this.setState({
-      clicked: {...this.state.clicked, [side]: wordIdx},
+      clicked: {[side]: wordIdx},
     }, () => {
       this.props.onChangeClicked(side, wordIdx);
     });

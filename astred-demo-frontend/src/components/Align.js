@@ -39,8 +39,9 @@ class AlignSec extends PureComponent {
     const prevNWords = side === 'src' ? this.props.srcWords.length : this.props.tgtWords.length;
     const val = this.validateTextField(textField);
     const nWords = tokStrToWords(val).length;
+    // As a callback to setting the state, check whether a whole word was deleted or not
+    // If a word as deleted, then we also discard any previous alignment
     this.props.onAppStateChange(textField.name, val, () => {
-      console.log('triggered');
       if (prevNWords !== nWords) {
         this.updateAlignFieldWithValue('', false);
       } else {

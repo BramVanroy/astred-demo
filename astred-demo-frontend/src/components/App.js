@@ -66,7 +66,9 @@ class App extends Component {
       ...{
         srcWords: tokStrToWords(tokenizeInfo.srcTokStr),
         tgtWords: tokStrToWords(tokenizeInfo.tgtTokStr),
-
+        wordAlignsStr: '',
+        wordAligns: [],
+        astred: {},
       },
     });
     // Need to validate here for cases where we tokenize, then remove everything in tok field, and then tokenize again
@@ -121,7 +123,7 @@ class App extends Component {
       }
     },
     ).catch((errStr) => {
-      this.onError(String(errStr));
+      this.onError(String(errStr) + `: ${url}`);
     });
   }
 

@@ -178,7 +178,6 @@ class AlignViz extends PureComponent {
   }
 
   render() {
-    console.log(this.props.tgtWords);
     const isEmpty = !(this.props.srcWords && this.props.srcWords.length > 0 && this.props.tgtWords && this.props.tgtWords.length > 0);
 
     return (

@@ -45,6 +45,17 @@ class AstredSec extends PureComponent {
     this.setState({clicked: {side: side, index: wordIdx}});
   }
 
+  static getDerivedStateFromProps(nextProps) {
+    if (!(nextProps.astred && Object.keys(nextProps.astred).length > 0)) {
+      return {
+        drawSeqGroups: false,
+        drawSacrGroups: false,
+        clicked: {},
+      };
+    }
+    return null;
+  }
+
   render() {
     const isEmpty = !(this.props.astred && Object.keys(this.props.astred).length > 0);
     const clickedWord = (this.state.clicked && Object.keys(this.state.clicked).length > 0 && !isEmpty) ? this.props.astred[this.state.clicked.side][this.state.clicked.index] : null;
