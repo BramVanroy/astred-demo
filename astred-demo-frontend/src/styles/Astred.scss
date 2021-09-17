@@ -2,12 +2,10 @@
 
 #astred {
     .secondary-content {
-        display: grid;
+        display: flex;
         min-height: 140px;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        grid-template-rows: auto;
-        grid-gap: 2em;
         margin-top: 2em;
+        gap: 1em;
         h3 {
             margin: 0;
         }
@@ -34,6 +32,9 @@
             font-size: inherit;
             display: flex;
             margin-bottom: 0.5em;
+            label:first-child {
+                margin-right: 1em;
+            }
             label:nth-child(2) {
                 margin: auto;
             }
@@ -52,6 +53,10 @@
             padding: 0;
             li {
                 line-height: 1.5;
+                white-space: nowrap;
+                &:nth-child(2) {
+                    margin: auto;
+                }
             }
         }
         svg {
@@ -73,5 +78,50 @@
                 stroke-dasharray: 4;
             }
         }
+    }
+
+    .word-content {
+        > ul {
+            column-count: 2;
+            column-gap: 1em;
+        }
+
+        > ul > li {
+            break-inside: avoid-column;
+        }
+    }
+}
+
+@media screen and (max-width: 800px) {
+    #astred .secondary-content {
+        flex-wrap: wrap;
+    }
+    #astred .controls {
+        flex-basis: 100%;
+        margin-bottom: 1em;
+        margin-right: 0;     
+    }
+
+    #astred .word-content, #astred .groups-content {
+        flex: 1;
+    }
+    #astred .legend ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;        
+    }
+}
+
+
+@media screen and (max-width: 1023px) {
+    #astred .word-content > ul {
+        column-count: auto;
+
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    #astred .secondary-content {
+        gap: 2em;
     }
 }

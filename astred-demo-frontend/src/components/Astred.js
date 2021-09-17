@@ -108,7 +108,7 @@ class AstredSec extends PureComponent {
                   </div>
                   {clickedWord ?
                       <Fragment>
-                        <div>
+                        <div className="word-content">
                           <h3>Word information</h3>
                           <ul>
                             {
@@ -142,7 +142,7 @@ class AstredSec extends PureComponent {
                             }
                           </ul>
                         </div>
-                        <div>
+                        <div className="groups-content">
                           <h3>Sequence information</h3>
                           <ul>
                             {
