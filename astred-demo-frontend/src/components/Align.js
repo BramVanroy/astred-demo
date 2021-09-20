@@ -207,7 +207,7 @@ class AlignSec extends PureComponent {
         <div className="content">
           <h2>Word alignment</h2>
           <p>Here you can word-align the tokenized sentences and make changes to the suggested tokens. To ease the process, you can request suggestions for automatic word alignments. These are not always very accurate, so it is recommended to use these as guidelines or a starting point and then manually correct them.</p>
-          <p>You can change the word alignments either by typing them (<code>src_word_idx-tgt_word_idx</code>; start counting at 0), or by clicking. First click on a word and then click on the target word
+          <p><strong>You can change the word alignments</strong> either by typing them (<code>src_word_idx-tgt_word_idx</code>; start counting at 0), or by clicking. First click on a word and then click on the target word
           you wish to align it with. To remove an alignment, do the same. If you add or remove a token in the text fields, the word alignments will reset.</p>
 
           <Details>
