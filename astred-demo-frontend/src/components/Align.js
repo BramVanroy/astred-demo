@@ -153,11 +153,10 @@ class AlignSec extends PureComponent {
 
       if (alignResponse && Object.keys(alignResponse).length > 0 && 'word_aligns' in alignResponse) {
         this.updateAlignFieldWithValue(alignResponse.word_aligns);
+        this.aligner.current.previousElementSibling.classList.remove('loading');
       } else {
         this.props.onError('Automatic alignment failed. Response did not contain the required data.');
       }
-
-      this.aligner.current.previousElementSibling.classList.remove('loading');
     }
   }
 
