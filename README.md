@@ -1,5 +1,8 @@
 # ASTrED demo
 
+The demo is currently running at https://lt3.ugent.be/astred-demo/. This repository gives you the tools to adapt the code or run
+the demo yourself.
+
 ## API installation
 
 The API runs on FastAPI (Python) to provide an easy access point for the demo. The Python dependencies
