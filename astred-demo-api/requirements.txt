@@ -1,0 +1,4 @@
+astred[parsers]
+fastapi
+uvicorn
+git+https://github.com/BramVanroy/awesome-align.git@astred_compat

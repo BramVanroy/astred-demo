@@ -25,6 +25,7 @@ languages = {
     "nl": {"spacy_model_name": "nl_core_news_sm", "text": "Dutch"},
     "fr": {"spacy_model_name": "fr_core_news_sm", "text": "French"},
     "de": {"spacy_model_name": "de_core_news_sm", "text": "German"},
+    "es": {"spacy_model_name": "es_core_news_sm", "text": "Spanish"},
 }
 
 
