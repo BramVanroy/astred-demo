@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Literal
 
 from astred.pairs import IdxPair
 from fastapi import FastAPI
@@ -7,7 +7,6 @@ import spacy
 
 from astred import Aligner, AlignedSentences, Sentence
 from astred.utils import load_parser
-
 
 app = FastAPI()
 app.add_middleware(
@@ -28,9 +27,13 @@ languages = {
     "es": {"spacy_model_name": "es_core_news_sm", "text": "Spanish"},
 }
 
-
-nlps = {f"{lang}_spacy": spacy.load(d["spacy_model_name"], exclude=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"]) for lang, d in languages.items()}
-nlps = {**nlps, **{f"{lang}_stanza": load_parser(lang, is_tokenized=True, tokenize_no_ssplit=True) for lang in languages.keys()}}
+# spaCy
+nlps = {f"{lang}_spacy": spacy.load(d["spacy_model_name"],
+                                    exclude=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])
+        for lang, d in languages.items()}
+# stanza
+nlps = {**nlps, **{f"{lang}_stanza": load_parser(lang, is_tokenized=True, tokenize_no_ssplit=True)
+                   for lang in languages.keys()}}
 
 
 @app.get("/languages")
@@ -39,7 +42,7 @@ async def get_languages():
 
 
 @app.get("/tokenize")
-async def tokenize(sentence: str, lang: str = "en"):
+async def tokenize(sentence: str, lang: Literal["en", "nl", "fr", "de", "es"]):
     doc = nlps[f"{lang}_spacy"](sentence)
 
     return {"sentence": sentence, "lang": lang,
@@ -47,11 +50,15 @@ async def tokenize(sentence: str, lang: str = "en"):
 
 
 @app.get("/align")
-async def align(src_sentence: str, tgt_sentence: str, src_lang: Optional[str] = None, tgt_lang: Optional[str] = None, is_tokenized: bool = True):
+async def align(src_sentence: str,
+                tgt_sentence: str,
+                src_lang: Optional[Literal["en", "nl", "fr", "de", "es"]] = None,
+                tgt_lang: Optional[Literal["en", "nl", "fr", "de", "es"]] = None,
+                is_tokenized: bool = True):
     output = {"src_sentence": src_sentence, "tgt_sentence": tgt_sentence,
               "is_tokenized": is_tokenized, "src_lang": src_lang, "tgt_lang": tgt_lang}
 
-    if not is_tokenized:
+    if not is_tokenized and src_lang and tgt_lang:
         src_tok = (await tokenize(src_sentence, src_lang))["tok"]
         tgt_tok = (await tokenize(tgt_sentence, tgt_lang))["tok"]
     else:
@@ -66,7 +73,7 @@ async def align(src_sentence: str, tgt_sentence: str, src_lang: Optional[str] = 
             "word_aligns": word_aligns}
 
 
-def get_word_info(sentence: Sentence, word_idx) -> Dict[str, Any]:
+def get_word_info(sentence: Sentence, word_idx: int) -> Dict[str, Any]:
     word = sentence[word_idx]
     return {
         "text": word.text,
@@ -103,7 +110,11 @@ def aligns_to_giza(aligns: List[IdxPair]) -> str:
 
 
 @app.get("/astred")
-async def astred(src_sentence: str, tgt_sentence: str, aligns: str, src_lang: str, tgt_lang: str):
+async def astred(src_sentence: str,
+                 tgt_sentence: str,
+                 aligns: str,
+                 src_lang: Optional[Literal["en", "nl", "fr", "de", "es"]] = None,
+                 tgt_lang: Optional[Literal["en", "nl", "fr", "de", "es"]] = None) -> Dict[str, Any]:
     src_sent = Sentence.from_text(src_sentence, nlps[f"{src_lang}_stanza"], is_tokenized=True)
     tgt_sent = Sentence.from_text(tgt_sentence, nlps[f"{tgt_lang}_stanza"], is_tokenized=True)
     aligned = AlignedSentences(src_sent, tgt_sent, word_aligns=aligns)
